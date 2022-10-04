@@ -19,4 +19,4 @@ const datosUbicacion = [{tipo: 'ciudad de mas de 150 mil habitantes', factor: 1.
                         {tipo: 'ciudad de menos de 100 mil habitantes', factor: 1.13},
                         {tipo: 'zona rural', factor: 0.89},]
 
-const CostoM2 = 38.40
+const valor = 38.40

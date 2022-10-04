@@ -1,11 +1,10 @@
-//Función cargar Combos SELECT
 const cargarCombo = (select, array)=> {
     if (array.length > 0) {
         array.forEach(elemento => {
             select.innerHTML += `<option value="${elemento.factor}">${elemento.tipo}</option>`
         })
     } else {
-        console.error("No existen elementos en el array.")
+        console.error("sin elementos en el array")
     }
 }
 cargarCombo(vehiculo, datosVehiculo)
@@ -21,11 +20,11 @@ const datosCompletos = ()=> {
 
 const realizarCotizacion = ()=> {
     if (datosCompletos()) {
-        const seguro = new Cotizador(modelo.value, propiedad.value, ubicacion.value, CostoM2)
+        const seguro = new Cotizador(modelo.value, propiedad.value, ubicacion.value, valor)
               importe.innerText = seguro.cotizar()
               btnEnviar.classList.remove("ocultar")
     } else {
-        alert("⛔️ Completa todos los valores solicitados.")
+        Sweetale ("ALTO AHI, debes completar todos los valores", "warning")
     }
 }
 
@@ -38,9 +37,20 @@ const enviarPorEmail = ()=> {
         poliza: importe.innerText
     }
     localStorage.setItem("UltimaCotizacion", JSON.stringify(cotizacion))
-    alert("✅ Cotización enviada. ¡Muchas gracias por elegirnos!")
+    alert("Cotización enviada")
     btnEnviar.classList.add("ocultar")
 }
 
 btnCotizar.addEventListener("click", realizarCotizacion)
 btnEnviar.addEventListener("click", enviarPorEmail)
+
+
+const Sweetale = (mensaje, icono)=> {
+    Swal.fire({
+        icon: icono,
+        title: mensaje,
+   
+      })
+
+
+}

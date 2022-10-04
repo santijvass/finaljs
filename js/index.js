@@ -1,12 +1,12 @@
 class Cotizador {
-    constructor(modelo, factorvehiculo, factorUbicacion, costoM2) {
+    constructor(modelo, factorvehiculo, factorUbicacion, valor) {
         this.modelo = parseInt(modelo)
         this.factorVe = parseFloat(factorvehiculo)
         this.factorUb = parseFloat(factorUbicacion)
-        this.costoM2 = parseFloat(costoM2)
+        this.valor = parseFloat(valor)
     }
     cotizar() {
-        let resultado = (this.modelo * this.factorVe * this.factorUb * this.costoM2)
+        let resultado = (this.modelo * this.factorVe * this.factorUb * this.valor)
         return resultado.toFixed(2)
     }
 }

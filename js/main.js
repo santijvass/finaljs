@@ -1,56 +1,100 @@
-const cargarCombo = (select, array)=> {
-    if (array.length > 0) {
-        array.forEach(elemento => {
-            select.innerHTML += `<option value="${elemento.factor}">${elemento.tipo}</option>`
+const Products = [];
+const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+const setQuantity = () =>
+{
+    const label = document.querySelector('#cart-quantity');
+    const total = cart.reduce((acc, item) => acc + item.quantity, 0);
+    if(total > 0)
+    {
+        label.innerText = total;
+    }
+}
+
+const notification = (text) =>
+{
+    Toastify({
+        text: text,
+        className: "info",
+        style: {
+          background: "#fff",
+          color:"#00a650"
+        }
+      }).showToast();
+}
+
+
+const loadEvents = () =>
+{
+    let buttons = document.querySelectorAll('.button');
+    for (const button of buttons) 
+    {
+        button.addEventListener('click', ()=>{
+
+            let found = cart.find(element => element.id == button.id);
+            if(found)
+            {
+                
+                found.quantity++;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                notification('Producto agregado con éxito!')
+            }
+            else
+            {
+                let product = Products.find(element => element.id == button.id);
+                if(product)
+                {
+                    let newProduct = {
+                        id:product.id,
+                        name: product.name,
+                        price: product.price,
+                        description: product.description,
+                        image: product.image,
+                        quantity: 1
+                    }
+                    cart.push(newProduct);
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    notification('Producto agregado con éxito!');
+                }
+            }
+            setQuantity(cart);
         })
-    } else {
-        console.error("sin elementos en el array")
-    }
-}
-cargarCombo(vehiculo, datosVehiculo)
-cargarCombo(ubicacion, datosUbicacion)
-
-const datosCompletos = ()=> {
-    if (vehiculo.value !== "..." && ubicacion.value !== "..." && parseInt(modelo.value) && modelo.value >= 2000 && modelo.value <= 2022) {
-        return true
-    } else {
-        return false
     }
 }
 
-const realizarCotizacion = ()=> {
-    if (datosCompletos()) {
-        const seguro = new Cotizador(modelo.value, propiedad.value, ubicacion.value, valor)
-              importe.innerText = seguro.cotizar()
-              btnEnviar.classList.remove("ocultar")
-    } else {
-        Sweetale ("ALTO AHI, debes completar todos los valores", "warning")
+
+const loadProducts = (Products) =>
+{
+    let container = document.querySelector('#container');
+    for (const product of Products)
+    {   
+        let div = document.createElement('div');
+        div.setAttribute('class', 'card');
+        div.innerHTML = `
+            <img src="${product.image}" alt="${product.description}">
+            <h3>${product.price}</h3>
+            <h4>${product.name}</h4>
+            <button class="button" id="${product.id}">Agregar al carrito</button>
+        `;
+        container.appendChild(div);
+    }
+    loadEvents();
+}
+
+const getData = async () =>
+{
+    try
+    {
+        const response = await fetch('/data.json');
+        const data = await response.json();
+        loadProducts(data);
+        Products.push(...data);
+        setQuantity();
+    }
+    catch(e)
+    {
+        console.log(e);
     }
 }
 
-const enviarPorEmail = ()=> {
-    const cotizacion = {
-        fechaCotizacion: new Date().toLocaleString(),
-        vehiculo: vehiculo[vehiculo.selectedIndex].text,
-        ubicacion: ubicacion[ubicacion.selectedIndex].text,
-        modelo: modelo.value,
-        poliza: importe.innerText
-    }
-    localStorage.setItem("UltimaCotizacion", JSON.stringify(cotizacion))
-    alert("Cotización enviada")
-    btnEnviar.classList.add("ocultar")
-}
-
-btnCotizar.addEventListener("click", realizarCotizacion)
-btnEnviar.addEventListener("click", enviarPorEmail)
-
-
-const Sweetale = (mensaje, icono)=> {
-    Swal.fire({
-        icon: icono,
-        title: mensaje,
-   
-      })
-
-
-}
+getData();
